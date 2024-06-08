@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load my_filters %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/koszyk.css' %}">
+    {% if koszyk_items %}
+        <div class="obiekt">
+            <h1>Twój koszyk</h1>
+            <hr>
+            {% for item in koszyk_items %}
+                <div class="pojedynczo">
+                    <img src="{{ item.pierwszy_obraz }}" alt="obraz" width="16%" height="6%">
+                    <p id="opis">{{ item.id_atrakcji.nazwa_atrakcji }} - {{ item.cena_koncowa }} zł</p>
+                    <div class="quantity-buttons">
+                        <form action="{% url 'dodaj_do_koszyka' item.id_atrakcji.id %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="decrease">
+                            <button type="submit" class="minus-btn">-</button>
+                        </form>
+                        <span class="ilosc" id="ilosc_{{ item.id }}"><b>{{ item.ilosc }}</b></span>
+                        <form action="{% url 'dodaj_do_koszyka' item.id_atrakcji.id %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="increase">
+                            <button type="submit" class="plus-btn">+</button>
+                        </form>
+                        <form action="{% url 'usun_z_koszyka' item.id %}" method="post" id="form_usun">
+                            {% csrf_token %}
+                            <button type="submit" id="usun"><b>Usuń atrakcję z koszyka</b></button>
+                        </form>
+                    </div>
+                </div>
+                <input type="button" class="pokaz_tabele" value="Rozwiń" onclick="pokazTabele('{{ item.id }}')">
+                <table id="tabela_{{ item.id }}" class="tabela-znizek" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Nazwa atrakcji</th>
+                            <th>Cena podstawowa (zł)</th>
+                            <th>Dostępne zniżki</th>
+                            <th>Cena po zniżce (zł)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in item.ilosc|times %}
+                            <tr>
+                                <td>{{ item.id_atrakcji.nazwa_atrakcji }}</td>
+                                <td>{{ item.id_atrakcji.cena_podstawowa }}</td>
+                                <td>
+                                    <select onchange="obliczCenePoZnizce('{{ item.id }}', this)">
+                                        <option value="1" data-mnoznik="0">Brak</option>
+                                        {% for znizka in znizki %}
+                                            <option value="{{ znizka.id }}" data-mnoznik="{{ znizka.mnoznik }}">{{ znizka.nazwa_znizki }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td id="cena_po_znizce_{{ item.id }}">{{item.id_atrakcji.cena_podstawowa}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <hr>
+            {% endfor %}
+            <p id="laczna_cena" style="font-size: 25px"><b>Łączna cena:</b> {{ suma_cen }} zł</p>
+            <a href="{% url 'trasa' %}" id="trasa"><b>Wyznacz optymalną trasę</b></a>
+            <a href="{% url 'zapisz_plan' %}" id="trasa"><b>Zapisz plan</b></a>
+        </div>
+    {% else %}
+        <p id="koszyk_pusty">Koszyk jest pusty</p>
+        <p id="koszyk_pusty_v2">Dodaj do koszyka atrakcje i wyznacz optymalną trasę</p>
+        <img src="{% static 'global_photos/koszyk.png' %}" alt="koszyk" id="zdjecie_koszyka">
+    {% endif %}
+
+    <script src="{% static 'js/koszyk.js' %}"></script>
+
+{% endblock %}

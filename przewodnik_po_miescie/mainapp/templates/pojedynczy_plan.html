@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/pojedynczy_plan.css' %}">
+
+    <div class="plan" data-plan-nazwa="{{ plan.nazwa_planu }}" data-plan-opis="{{ plan.opis_planu }}">
+        {% for atrakcja, obraz in obrazy %}
+            <div class="atrakcja" data-nazwa="{{ atrakcja.nazwa_atrakcji }}" data-opis="{{ atrakcja.opis }}" data-obraz="{{ obraz }}"></div>
+        {% endfor %}
+
+        <div class="lewa_strona">
+            <button class="prev" id="prevButton" data-length="{{ plan.atrakcje.all|length }}">&#10094;</button>
+            <img src="{{ obrazy.0 }}" alt="photo" id="obraz-atrakcji" style="width: 700px; height: 550px; text-align: center">
+            <button class="next" id="nextButton" data-length="{{ plan.atrakcje.all|length }}">&#10095;</button>
+            <p id="nazwa_atrakcji"><b>{{ plan.atrakcje.first.nazwa_atrakcji }}</b></p>
+            <p id="opis_atrakcji">{{ plan.atrakcje.first.opis }}</p>
+        </div>
+
+        <div class="prawa_strona">
+            <p id="nazwa_planu" style="font-size: 40px; text-align: center">{{ plan.nazwa_planu }}</p>
+            <p id="opis_planu" style="font-size: 20px">{{ plan.opis_planu }}</p>
+            <br><br>
+            <form method="POST" id="form1">
+                {% csrf_token %}
+                <label for="id_start_location"><b>Wprowadź początkową lokalizację</b></label>
+                {{ form.start_location }}
+                <label for="id_mode"><b>Wybierz sposób podróży</b></label>
+                {{ form.mode }}
+                <button type="submit" style="margin-top: 5%">Zatwierdź</button>
+            </form>
+            {% if url %}
+                <div class="map-container">
+                    <img src="{{ url }}" style="width: 90%; margin-left: 5%">
+                    <div>
+                            <ul>
+                                {% for nr, nazwa in places.items %}
+                                    <li>{{ nr }}: {{ nazwa }}</li>
+                                {% endfor %}
+                            </ul>
+                    </div>
+                    <form action="{% url 'pdf_download' %}" method="get">
+                        <input type="hidden" name="from_basket" value="False">
+                        <input type="hidden" name="start_loc" value="{{ start_loc }}">
+                        <input type="hidden" name="plan_id" value={{ plan_id }}>
+                        <input type="hidden" name="mode" value="{{ mode }}">
+                        <button type="submit" id="przycisk">Pobierz plan</button>
+                    </form>
+
+                    <form action="{% url 'send_mail' %}" method="get">
+                        <input type="hidden" name="from_basket" value="False">
+                        <input type="hidden" name="start_loc" value="{{ start_loc }}">
+                        <input type="hidden" name="plan_id" value={{ plan_id }}>
+                        <input type="hidden" name="mode" value="{{ mode }}">
+                        <button type="submit" class="download-button">Wyślij plan mailem</button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="{% static 'js/pojedynczy_plan.js' %}"></script>
+
+{% endblock %}

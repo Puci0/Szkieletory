@@ -1,0 +1,100 @@
+html, body {
+    height: 100%;
+}
+
+#form1 {
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    width: 500px;
+    text-align: left;
+    margin: 0 auto;
+    margin-top: 2%;
+    margin-bottom: 2%;
+}
+
+input, select {
+    display: block;
+    width: calc(100% - 40px);
+    margin: 0 auto;
+    margin-bottom: 15px;
+    margin-top: 15px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+button {
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 20px;
+    margin-bottom: 15px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    background-color: #7f90ba;
+    width: calc(100%);
+    font-size: 16px;
+}
+
+.map-container {
+    display: inline-block;
+    margin: 10px;
+    vertical-align: top;
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    position: relative;
+    width: 45%;
+}
+
+.map-container.first{
+    float: left;
+    height: 45vw;
+}
+
+.map-container.second{
+    float: right;
+     height: 45vw;
+}
+
+label[for=id_start_location] {
+    margin-left: 25%;
+}
+
+label[for=id_mode]{
+    margin-left: 32%;
+}
+
+input#id_start_location {
+    margin-top: 3.5%;
+}
+
+.footer {
+    clear: both;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin: 0 auto;
+    font-size: 20px;
+}
+
+tr, td {
+    border: 1px solid black;
+    padding: 5px;
+}
+
+th{
+    border: 1px solid black;
+    font-size: 15px;
+    background-color: #7f90ba;
+    padding: 5px 10px;
+    color: black;
+    border: 1px solid black;
+    margin-right: 30%;
+}

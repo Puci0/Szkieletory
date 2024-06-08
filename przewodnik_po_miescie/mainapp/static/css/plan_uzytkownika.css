@@ -1,0 +1,56 @@
+table {
+    width: 75%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+    font-size: 20px;
+}
+
+th {
+    background-color: #f4f4f4;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+td {
+    width: 20px;
+    min-width: 20px;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+.btn-primary, .btn-danger{
+    font-size: 20px;
+    background-color: #7f90ba;
+    border-radius: 10px;
+    padding: 5px 10px;
+    color: black;
+    border: 1px solid black;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.btn-danger{
+    margin-top: 2%;
+}
+
+.btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+}
+

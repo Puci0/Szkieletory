@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/atrakcja.css' %}">
+    <div class="atrakcja">
+        <img src="{{ pierwszy_obraz }}" alt="photo" id="obraz">
+        <h2 id="nazwa_atrakcji">{{ atrakcja.nazwa_atrakcji }}</h2>
+        <div class="opis">
+            <h2><b>Opis:</b></h2>
+            <p>{{ atrakcja.opis }}</p>
+        </div>
+        <div class="info">
+            <p><b>Kategoria atrakcji:</b> {{ atrakcja.kategoria }}</p>
+            <p><b>Cena:</b> {{ atrakcja.cena_podstawowa }} zł</p>
+            <p><b>Wiek wstępu:</b> {{ atrakcja.wiek_min }} - {{ atrakcja.wiek_max }} lat</p>
+            <p><b>Godziny otwarcia:</b> {{ atrakcja.godzina_otwarcia }} - {{ atrakcja.godzina_zamkniecia }}</p>
+            <p><b>Przewidywany czas na zwiedzanie:</b> {{ atrakcja.czas_na_zwiedzanie }} h</p>
+        </div>
+    </div>
+{% endblock %}

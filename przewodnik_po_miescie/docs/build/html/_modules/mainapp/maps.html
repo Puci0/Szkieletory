@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mainapp.maps &mdash; Przewodnik po mieście 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=8d563738"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Przewodnik po mieście
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html">models.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../views.html">views.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pdf.html">pdf.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../maps.html">maps.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../forms.html">forms.py</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Przewodnik po mieście</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">mainapp.maps</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for mainapp.maps</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">urlencode</span>
+<span class="kn">from</span> <span class="nn">django.conf</span> <span class="kn">import</span> <span class="n">settings</span>
+
+
+<span class="n">API_KEY</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">API_KEY</span>
+
+<div class="viewcode-block" id="memoize">
+<a class="viewcode-back" href="../../maps.html#mainapp.maps.memoize">[docs]</a>
+<span class="k">def</span> <span class="nf">memoize</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dekorator do zapamiętywania wyników funkcji (memoization).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cache</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">def</span> <span class="nf">memoized_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cache</span><span class="p">:</span>
+            <span class="n">cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">memoized_func</span></div>
+
+
+
+<span class="nd">@memoize</span>
+<span class="k">def</span> <span class="nf">get_sorted_list_and_legs</span><span class="p">(</span><span class="n">start_loc</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">loc_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span><span class="s1">&#39;walking&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pobiera posortowaną listę lokalizacji i informacje o odcinkach trasy.</span>
+
+<span class="sd">    :param start_loc: Lokalizacja początkowa</span>
+<span class="sd">    :param loc_list: Lista lokalizacji</span>
+<span class="sd">    :param mode: Tryb podróży (domyślnie &#39;walking&#39;)</span>
+<span class="sd">    :return: Krotka zawierająca posortowaną listę lokalizacji i informacje o odcinkach trasy</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">start_loc</span> <span class="o">=</span> <span class="s2">&quot;Warszawa &quot;</span> <span class="o">+</span> <span class="n">start_loc</span>
+    <span class="n">name_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Warszawa &quot;</span> <span class="o">+</span> <span class="n">loc</span><span class="o">.</span><span class="n">nazwa_atrakcji</span> <span class="k">for</span> <span class="n">loc</span> <span class="ow">in</span> <span class="n">loc_list</span><span class="p">]</span>
+
+    <span class="n">PATH_URL</span> <span class="o">=</span> <span class="s1">&#39;https://maps.googleapis.com/maps/api/directions/json&#39;</span>
+
+    <span class="n">PATH_PARAMS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="n">API_KEY</span><span class="p">,</span>
+        <span class="s1">&#39;origin&#39;</span><span class="p">:</span> <span class="n">start_loc</span><span class="p">,</span>
+        <span class="s1">&#39;destination&#39;</span><span class="p">:</span> <span class="n">start_loc</span><span class="p">,</span>
+        <span class="s1">&#39;mode&#39;</span><span class="p">:</span> <span class="n">mode</span><span class="p">,</span>
+        <span class="s1">&#39;waypoints&#39;</span><span class="p">:</span> <span class="s2">&quot;optimize:true|&quot;</span> <span class="o">+</span> <span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">name_list</span><span class="p">),</span>
+    <span class="p">}</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">PATH_URL</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">PATH_PARAMS</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="n">waypoint_order</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;routes&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;waypoint_order&#39;</span><span class="p">]</span>
+    <span class="n">sorted_loc_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">loc_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">waypoint_order</span><span class="p">]</span>
+    <span class="n">legs</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;routes&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;legs&#39;</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">sorted_loc_list</span><span class="p">,</span> <span class="n">legs</span>
+
+
+<div class="viewcode-block" id="generate_static_map">
+<a class="viewcode-back" href="../../maps.html#mainapp.maps.generate_static_map">[docs]</a>
+<span class="k">def</span> <span class="nf">generate_static_map</span><span class="p">(</span><span class="n">start_loc</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">loc_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span><span class="s1">&#39;walking&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generuje statyczną mapę z zaznaczoną trasą zwiedzania.</span>
+
+<span class="sd">    :param start_loc: Lokalizacja początkowa</span>
+<span class="sd">    :param loc_list: Lista lokalizacji</span>
+<span class="sd">    :param mode: Tryb podróży (domyślnie &#39;walking&#39;)</span>
+<span class="sd">    :return: Krotka zawierająca URL obrazu mapy i miejsca na trasie</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">loc_list</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">loc_list</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">obj</span><span class="p">:</span> <span class="n">obj</span><span class="o">.</span><span class="n">nazwa_atrakcji</span><span class="p">)</span>
+    <span class="n">sorted_loc_list</span><span class="p">,</span> <span class="n">legs</span> <span class="o">=</span> <span class="n">get_sorted_list_and_legs</span><span class="p">(</span><span class="n">start_loc</span><span class="p">,</span> <span class="n">loc_list</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+
+    <span class="n">IMAGE_URL</span> <span class="o">=</span> <span class="s1">&#39;https://maps.googleapis.com/maps/api/staticmap?&#39;</span>
+    <span class="n">COLORS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;0x0C9DEFff&#39;</span><span class="p">,</span> <span class="s1">&#39;0xEFA40Cff&#39;</span><span class="p">,</span> <span class="s1">&#39;0x0BD55Aff&#39;</span><span class="p">]</span>
+
+    <span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">leg</span> <span class="ow">in</span> <span class="n">legs</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">leg</span><span class="p">[</span><span class="s1">&#39;start_location&#39;</span><span class="p">][</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">leg</span><span class="p">[</span><span class="s1">&#39;start_location&#39;</span><span class="p">][</span><span class="s1">&#39;lng&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">leg</span><span class="p">[</span><span class="s1">&#39;steps&#39;</span><span class="p">]:</span>
+            <span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">step</span><span class="p">[</span><span class="s1">&#39;end_location&#39;</span><span class="p">][</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">step</span><span class="p">[</span><span class="s1">&#39;end_location&#39;</span><span class="p">][</span><span class="s1">&#39;lng&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="n">IMAGE_PARAMS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="n">API_KEY</span><span class="p">,</span>
+        <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="s1">&#39;640x640&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;scale&#39;</span><span class="p">:</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;markers&#39;</span><span class="p">:</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;color:0x9933FF|label:S|</span><span class="si">{</span><span class="n">paths</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">],</span>
+        <span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">paths</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;color:</span><span class="si">{</span><span class="n">COLORS</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">COLORS</span><span class="p">)]</span><span class="si">}</span><span class="s2">|weight:3|&quot;</span>
+        <span class="n">x</span> <span class="o">+=</span> <span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">IMAGE_PARAMS</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">IMAGE_PARAMS</span><span class="p">[</span><span class="s1">&#39;markers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;color:0x3333FF|label:</span><span class="si">{</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">|</span><span class="si">{</span><span class="n">path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">URL</span> <span class="o">=</span> <span class="n">IMAGE_URL</span> <span class="o">+</span> <span class="n">urlencode</span><span class="p">(</span><span class="n">IMAGE_PARAMS</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">places</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">IMAGE_PARAMS</span><span class="p">[</span><span class="s1">&#39;markers&#39;</span><span class="p">])):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">places</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">start_loc</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">places</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sorted_loc_list</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">nazwa_atrakcji</span>
+
+    <span class="k">return</span> <span class="n">URL</span><span class="p">,</span> <span class="n">places</span></div>
+
+
+
+<div class="viewcode-block" id="generate_interactive_map">
+<a class="viewcode-back" href="../../maps.html#mainapp.maps.generate_interactive_map">[docs]</a>
+<span class="k">def</span> <span class="nf">generate_interactive_map</span><span class="p">(</span><span class="n">start_loc</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">loc_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span><span class="s1">&#39;walking&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generuje interaktywną mapę z zaznaczoną trasą zwiedzania.</span>
+
+<span class="sd">    :param start_loc: Lokalizacja początkowa</span>
+<span class="sd">    :param loc_list: Lista lokalizacji</span>
+<span class="sd">    :param mode: Tryb podróży (domyślnie &#39;walking&#39;)</span>
+<span class="sd">    :return: URL interaktywnej mapy</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">loc_list</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">loc_list</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">obj</span><span class="p">:</span> <span class="n">obj</span><span class="o">.</span><span class="n">nazwa_atrakcji</span><span class="p">)</span>
+    <span class="n">sorted_loc_list</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_sorted_list_and_legs</span><span class="p">(</span><span class="n">start_loc</span><span class="p">,</span> <span class="n">loc_list</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+
+    <span class="n">BASE_URL</span> <span class="o">=</span> <span class="s1">&#39;https://www.google.com/maps/embed/v1/directions?&#39;</span>
+
+    <span class="n">PARAMS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;origin&#39;</span><span class="p">:</span> <span class="s2">&quot;Warszawa &quot;</span> <span class="o">+</span> <span class="n">start_loc</span><span class="p">,</span>
+        <span class="s1">&#39;destination&#39;</span><span class="p">:</span> <span class="n">sorted_loc_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">nazwa_atrakcji</span><span class="p">,</span>
+        <span class="s1">&#39;mode&#39;</span><span class="p">:</span> <span class="n">mode</span><span class="p">,</span>
+        <span class="s1">&#39;waypoints&#39;</span><span class="p">:</span> <span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;Warszawa &quot;</span> <span class="o">+</span> <span class="n">loc</span><span class="o">.</span><span class="n">nazwa_atrakcji</span> <span class="k">for</span> <span class="n">loc</span> <span class="ow">in</span> <span class="n">sorted_loc_list</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_loc_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="n">API_KEY</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">PARAMS</span><span class="p">[</span><span class="s1">&#39;waypoints&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">del</span> <span class="n">PARAMS</span><span class="p">[</span><span class="s1">&#39;waypoints&#39;</span><span class="p">]</span>
+
+    <span class="n">URL</span> <span class="o">=</span> <span class="n">BASE_URL</span> <span class="o">+</span> <span class="n">urlencode</span><span class="p">(</span><span class="n">PARAMS</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">URL</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Łukasz Kotowski, Dominik Gąsowski, Wojciech Domański, Jakub Kazimiruk.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

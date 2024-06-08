@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load my_filters %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/plan_uzytkownika.css' %}">
+    <table>
+        <thead>
+            <tr>
+                <th>Obraz</th>
+                <th>Nazwa planu</th>
+                <th>Data utworzenia</th>
+                <th>Akcje</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for plan_data in plany_z_atrakcjami %}
+                <tr>
+                    <td>
+                        {% for atrakcja_data in plan_data.atrakcje %}
+                            {% if forloop.first %}
+                                <img src="{{ atrakcja_data.pierwsze_zdjecie }}" alt="{{ atrakcja_data.atrakcja.nazwa_atrakcji }}">
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>{{ plan_data.plan.nazwa_planu_uzytkownika }}</td>
+                    <td>{{ plan_data.plan.data_utworzenia }}</td>
+                    <td>
+                        <form action="{% url 'plan_do_koszyka' plan_data.plan.id %}" method="get">
+                            <button type="submit" class="btn btn-primary"><b>Do koszyka</b></button>
+                        </form>
+                        <form action="{% url 'usun_z_planu' plan_data.plan.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger"><b>Usuń z planu</b></button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

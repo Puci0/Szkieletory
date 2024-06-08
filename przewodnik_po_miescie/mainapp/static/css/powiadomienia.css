@@ -1,0 +1,46 @@
+.messages {
+    position: fixed;
+    top: 30px; /* Ustawienie na samą górę */
+    left: 50%; /* Wycentrowanie w poziomie */
+    transform: translateX(-50%); /* Przesunięcie o połowę własnej szerokości w lewo */
+    width: 300px;
+    z-index: 1000;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+
+.messages li {
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    opacity: 0.9;
+    transition: opacity 0.5s ease-in-out;
+    display: none; /* Ukryj wszystkie powiadomienia domyślnie */
+}
+
+.messages li.show {
+    display: block; /* Pokaż powiadomienie, gdy ma klasę "show" */
+}
+
+.messages .success {
+    background-color: #dff0d8;
+    color: #3c763d;
+}
+
+.messages .error {
+    background-color: #f2dede;
+    color: #a94442;
+}
+
+.messages .warning {
+    background-color: #fcf8e3;
+    color: #8a6d3b;
+}
+
+.messages .info {
+    background-color: #d9edf7;
+    color: #31708f;
+}

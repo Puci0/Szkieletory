@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mainapp.views &mdash; Przewodnik po mieście 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=8d563738"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Przewodnik po mieście
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html">models.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../views.html">views.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pdf.html">pdf.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../maps.html">maps.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../forms.html">forms.py</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Przewodnik po mieście</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">mainapp.views</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for mainapp.views</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">get_object_or_404</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth</span> <span class="kn">import</span> <span class="n">authenticate</span><span class="p">,</span> <span class="n">login</span><span class="p">,</span> <span class="n">logout</span>
+<span class="kn">from</span> <span class="nn">.forms</span> <span class="kn">import</span> <span class="n">SignUpForm</span><span class="p">,</span> <span class="n">LogInForm</span><span class="p">,</span> <span class="n">StartLocation</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Atrakcja</span><span class="p">,</span> <span class="n">Koszyk</span><span class="p">,</span> <span class="n">Plan</span><span class="p">,</span> <span class="n">Znizka</span><span class="p">,</span> <span class="n">PlanyUzytkownika</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
+<span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">messages</span>
+<span class="kn">from</span> <span class="nn">.maps</span> <span class="kn">import</span> <span class="n">generate_static_map</span><span class="p">,</span> <span class="n">generate_interactive_map</span>
+<span class="kn">from</span> <span class="nn">.pdf</span> <span class="kn">import</span> <span class="n">generate_pdf</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
+<span class="kn">from</span> <span class="nn">django.core.mail</span> <span class="kn">import</span> <span class="n">EmailMessage</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">django.conf</span> <span class="kn">import</span> <span class="n">settings</span>
+<span class="kn">from</span> <span class="nn">django.utils</span> <span class="kn">import</span> <span class="n">timezone</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;mainapp&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="user_signup">
+<a class="viewcode-back" href="../../views.html#mainapp.views.user_signup">[docs]</a>
+<span class="k">def</span> <span class="nf">user_signup</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Widok rejestracji użytkownika.</span>
+
+<span class="sd">    GET: Wyświetla formularz rejestracji.</span>
+<span class="sd">    POST: Obsługuje przesłany formularz rejestracji.</span>
+
+<span class="sd">    Argumenty:</span>
+<span class="sd">    request (HttpRequest): Obiekt żądania HTTP.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Rozpoczęcie rejestracji użytkownika&quot;</span><span class="p">)</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">SignUpForm</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="n">form</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;Pomyślnie zarejestrowano.&#39;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Nowy użytkownik zarejestrowany: </span><span class="si">{</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;home&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Nieudana próba rejestracji: </span><span class="si">{</span><span class="n">form</span><span class="o">.</span><span class="n">errors</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">SignUpForm</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;rejestracja.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;form&#39;</span><span class="p">:</span> <span class="n">form</span><span class="p">})</span></div>
+
+
+
+<div class="viewcode-block" id="user_login">
+<a class="viewcode-back" href="../../views.html#mainapp.views.user_login">[docs]</a>
+<span class="k">def</span> <span class="nf">user_login</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Widok logowania użytkownika.</span>
+
+<span class="sd">    GET: Wyświetla formularz logowania.</span>
+<span class="sd">    POST: Obsługuje przesłany formularz logowania.</span>
+
+<span class="sd">    Argumenty:</span>
+<span class="sd">    request (HttpRequest): Obiekt żądania HTTP.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Rozpoczęcie logowania użytkownika&quot;</span><span class="p">)</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">LogInForm</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="n">username</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span>
+            <span class="n">password</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">]</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">authenticate</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">user</span><span class="p">:</span>
+                <span class="n">login</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Użytkownik zalogowany: </span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;koszyk&#39;</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/koszyk/&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;Zalogowano.&#39;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;home&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Nieudane logowanie dla użytkownika: </span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">messages</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;Nieprawidłowe dane. Podaj prawidłowy login oraz hasło.&#39;</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">LogInForm</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;logowanie.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;form&#39;</span><span class="p">:</span> <span class="n">form</span><span class="p">})</span></div>
+
+
+
+<div class="viewcode-block" id="user_logout">
+<a class="viewcode-back" href="../../views.html#mainapp.views.user_logout">[docs]</a>
+<span class="k">def</span> <span class="nf">user_logout</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wylogowanie użytkownika.</span>
+
+<span class="sd">    Argumenty:</span>
+<span class="sd">    request (HttpRequest): Obiekt żądania HTTP.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logout</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Użytkownik wylogowany&quot;</span><span class="p">)</span>
+    <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;Wylogowano&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;/login/&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="privacy_policy">
+<a class="viewcode-back" href="../../views.html#mainapp.views.privacy_policy">[docs]</a>
+<span class="k">def</span> <span class="nf">privacy_policy</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Widok polityki prywatności.</span>
+
+<span class="sd">    Argumenty:</span>
+<span class="sd">    request (HttpRequest): Obiekt żądania HTTP.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Wyświetlenie polityki prywatności&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;privacy_policy.html&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="dodaj_do_koszyka_home">
+<a class="viewcode-back" href="../../views.html#mainapp.views.dodaj_do_koszyka_home">[docs]</a>
+<span class="k">def</span> <span class="nf">dodaj_do_koszyka_home</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">atrakcja_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dodaje atrakcję do koszyka z widoku home.</span>
+
+<span class="sd">    Argumenty:</span>
+<span class="sd">    request (HttpRequest): Obiekt żądania HTTP.</span>
+<span class="sd">    atrakcja_id (int): Identyfikator atrakcji, która ma zostać dodana do koszyka.</span>
+
+<span class="sd">    GET: Przekierowuje na stronę logowania jeśli użytkownik nie jest zalogowany.</span>
+<span class="sd">    POST: Dodaje atrakcję do koszyka lub zwiększa ilość jeśli już jest w koszyku.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rozpoczęcie dodawania do koszyka z widoku home: atrakcja_id=</span><span class="si">{</span><span class="n">atrakcja_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">atrakcja</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Atrakcja</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">atrakcja_id</span><span class="p">)</span>
+        <span class="n">koszyk</span> <span class="o">=</span> <span class="n">Koszyk</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">id_atrakcji</span><span class="o">=</span><span class="n">atrakcja</span><span class="p">,</span> <span class="n">id_klienta</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">cena_koncowa</span><span class="o">=</span><span class="n">atrakcja</span><span class="o">.</span><span class="n">cena_podstawowa</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">koszyk</span><span class="p">:</span>
+            <span class="n">koszyk</span><span class="o">.</span><span class="n">ilosc</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">koszyk</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;Produkt dodany do koszyka ponownie&#39;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dodano ponownie do koszyka: </span><span class="si">{</span><span class="n">atrakcja_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">META</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;HTTP_REFERER&#39;</span><span class="p">,</span> <span class="s1">&#39;home&#39;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">koszyk</span> <span class="o">=</span> <span class="n">Koszyk</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">id_atrakcji</span><span class="o">=</span><span class="n">atrakcja</span><span class="p">,</span> <span class="n">id_klienta</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">cena_koncowa</span><span class="o">=</span><span class="n">atrakcja</span><span class="o">.</span><span class="n">cena_podstawowa</span><span class="p">)</span>
+            <span class="n">koszyk</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;Produkt dodano do koszyka&#39;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dodano do koszyka: </span><span class="si">{</span><span class="n">atrakcja_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">META</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;HTTP_REFERER&#39;</span><span class="p">,</span> <span class="s1">&#39;home&#39;</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Niezalogowany użytkownik próbował dodać do koszyka: </span><span class="si">{</span><span class="n">atrakcja_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/login/&#39;</span><span class="p">)</span></div>
+
+
+    
+
+<div class="viewcode-block" id="dodaj_do_koszyka">
+<a class="viewcode-back" href="../../views.html#mainapp.views.dodaj_do_koszyka">[docs]</a>
+<span class="k">def</span> <span class="nf">dodaj_do_koszyka</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">atrakcja_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dodaje atrakcję do koszyka.</span>
+
+<span class="sd">    Argumenty:</span>
+<span class="sd">    request (HttpRequest): Obiekt żądania HTTP.</span>
+<span class="sd">    atrakcja_id (int): Identyfikator atrakcji, która ma zostać dodana do koszyka.</span>
+
+<span class="sd">    GET: Przekierowuje na stronę logowania jeśli użytkownik nie jest zalogowany.</span>
+<span class="sd">    POST: Dodaje atrakcję do koszyka lub zmienia ilość już dodanej atrakcji.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">:</span>
+        <span class="n">atrakcja</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Atrakcja</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">atrakcja_id</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;action&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">:</span>
+                <span class="n">action</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;action&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s1">&#39;increase&#39;</span><span class="p">:</span>
+                    <span class="n">koszyk</span> <span class="o">=</span> <span class="n">Koszyk</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">id_atrakcji</span><span class="o">=</span><span class="n">atrakcja</span><span class="p">,</span> <span class="n">id_klienta</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">koszyk</span><span class="p">:</span>
+                        <span class="n">koszyk</span><span class="o">.</span><span class="n">ilosc</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;Dodano do koszyka&#39;</span><span class="p">)</span>
+                        <span class="n">koszyk</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Zwiększono ilość w koszyku: </span><span class="si">{</span><span class="n">atrakcja_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">Koszyk</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">id_atrakcji</span><span class="o">=</span><span class="n">atrakcja</span><span class="p">,</span> <span class="n">id_klienta</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">cena_koncowa</span><span class="o">=</span><span class="n">atrakcja</span><span class="o">.</span><span class="n">cena_podstawowa</span><span class="p">,</span> <span class="n">ilosc</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dodano do koszyka: </span><span class="si">{</span><span class="n">atrakcja_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="s1">&#39;decrease&#39;</span><span class="p">:</span>
+                    <span class="n">koszyk</span> <span class="o">=</span> <span class="n">Koszyk</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">id_atrakcji</span><span class="o">=</span><span class="n">atrakcja</span><span class="p">,</span> <span class="n">id_klienta</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">koszyk</span> <span class="ow">and</span> <span class="n">koszyk</span><span class="o">.</span><span class="n">ilosc</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">koszyk</span><span class="o">.</span><span class="n">ilosc</span> <span class="o">-=</span> <span class="mi">1</span>
+                        <span class="n">koszyk</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+                        <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;Usunięto z koszyka&#39;</span><span class="p">)</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Zmniejszono ilość w koszyku: </span><span class="si">{</span><span class="n">atrakcja_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">koszyk</span> <span class="ow">and</span> <span class="n">koszyk</span><span class="o">.</span><span class="n">ilosc</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">koszyk</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+                        <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;Usunięto atrakcję z koszyka&#39;</span><span class="p">)</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Usunięto atrakcję z koszyka: </span><span class="si">{</span><span class="n">atrakcja_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;koszyk&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Niezalogowany użytkownik próbował dodać do koszyka: </span><span class="si">{</span><span class="n">atrakcja_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/login/&#39;</span><span class="p">)</span></div>
+
+
+
+
+<div class="viewcode-block" id="usun_z_koszyka">
+<a class="viewcode-back" href="../../views.html#mainapp.views.usun_z_koszyka">[docs]</a>
+<span class="k">def</span> <span class="nf">usun_z_koszyka</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">item_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Usuwa pozycję z koszyka.</span>
+
+<span class="sd">    Argumenty:</span>
+<span class="sd">    request (HttpRequest): Obiekt żądania HTTP.</span>
+<span class="sd">    item_id (int): Identyfikator pozycji w koszyku, która ma zostać usunięta.</span>
+
+<span class="sd">    POST: Usuwa wybraną pozycję z koszyka.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rozpoczęcie usuwania z koszyka: item_id=</span><span class="si">{</span><span class="n">item_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">item</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Koszyk</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">item_id</span><span class="p">)</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+
+        <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;Usunięto atrakcję z koszyka&#39;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Usunięto atrakcję z koszyka: </span><span class="si">{</span><span class="n">item_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;koszyk&#39;</span><span class="p">)</span></div>
+
+
+
+
+<div class="viewcode-block" id="trasa">
+<a class="viewcode-back" href="../../views.html#mainapp.views.trasa">[docs]</a>
+<span class="k">def</span> <span class="nf">trasa</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generuje trasę zwiedzania.</span>
+
+<span class="sd">    GET: Wyświetla formularz do wyboru lokalizacji początkowej i trybu podróży.</span>
+<span class="sd">    POST: Generuje trasę na podstawie wybranych atrakcji i lokalizacji początkowej.</span>
+
+<span class="sd">    Argumenty:</span>
+<span class="sd">    request (HttpRequest): Obiekt żądania HTTP.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Rozpoczęcie generowania trasy&quot;</span><span class="p">)</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">StartLocation</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="n">start_loc</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;start_location&#39;</span><span class="p">]</span>
+            <span class="n">koszyk_items</span> <span class="o">=</span> <span class="n">Koszyk</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">id_klienta</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+            <span class="n">loc_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">id_atrakcji</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">koszyk_items</span><span class="p">]</span>
+            <span class="n">mode</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span>
+
+            <span class="n">static_url</span><span class="p">,</span> <span class="n">places</span> <span class="o">=</span> <span class="n">generate_static_map</span><span class="p">(</span><span class="n">start_loc</span><span class="p">,</span> <span class="n">loc_list</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+            <span class="n">interactive_url</span> <span class="o">=</span> <span class="n">generate_interactive_map</span><span class="p">(</span><span class="n">start_loc</span><span class="p">,</span> <span class="n">loc_list</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Trasy zakończone&quot;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;trasa.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;form&#39;</span><span class="p">:</span> <span class="n">form</span><span class="p">,</span> <span class="s1">&#39;places&#39;</span><span class="p">:</span> <span class="n">places</span><span class="p">,</span> <span class="s1">&#39;static_url&#39;</span><span class="p">:</span> <span class="n">static_url</span><span class="p">,</span> <span class="s1">&#39;interactive_url&#39;</span><span class="p">:</span> <span class="n">interactive_url</span><span class="p">,</span> <span class="s1">&#39;start_loc&#39;</span><span class="p">:</span> <span class="n">start_loc</span><span class="p">,</span> <span class="s1">&#39;mode&#39;</span><span class="p">:</span> <span class="n">mode</span><span class="p">})</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">StartLocation</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;trasa.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;form&#39;</span><span class="p">:</span> <span class="n">form</span><span class="p">})</span></div>
+
+
+
+<div class="viewcode-block" id="pojedynczy_plan">
+<a class="viewcode-back" href="../../views.html#mainapp.views.pojedynczy_plan">[docs]</a>
+<span class="k">def</span> <span class="nf">pojedynczy_plan</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">plan_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wyświetla pojedynczy plan podróży.</span>
+
+<span class="sd">    GET: Wyświetla informacje o planie oraz formularz do wyboru lokalizacji początkowej i trybu podróży.</span>
+<span class="sd">    POST: Generuje trasę dla wybranego planu na podstawie lokalizacji początkowej.</span>
+
+<span class="sd">    Argumenty:</span>
+<span class="sd">    request (HttpRequest): Obiekt żądania HTTP.</span>
+<span class="sd">    plan_id (int): Identyfikator planu, który ma być wyświetlony.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">plan</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Plan</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">plan_id</span><span class="p">)</span>
+    <span class="n">atrakcje</span> <span class="o">=</span> <span class="n">plan</span><span class="o">.</span><span class="n">atrakcje</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">obrazy</span> <span class="o">=</span> <span class="p">[</span><span class="n">atrakcja</span><span class="o">.</span><span class="n">obraz</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">atrakcja</span> <span class="ow">in</span> <span class="n">atrakcje</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">StartLocation</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="n">mode</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span>
+            <span class="n">start_loc</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;start_location&#39;</span><span class="p">]</span>
+            <span class="n">static_url</span><span class="p">,</span> <span class="n">places</span> <span class="o">=</span> <span class="n">generate_static_map</span><span class="p">(</span><span class="n">start_loc</span><span class="p">,</span> <span class="n">atrakcje</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Generowanie trasy dla planu zakończone.&quot;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;pojedynczy_plan.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;form&#39;</span><span class="p">:</span> <span class="n">form</span><span class="p">,</span> <span class="s1">&#39;plan&#39;</span><span class="p">:</span> <span class="n">plan</span><span class="p">,</span> <span class="s1">&#39;plan_id&#39;</span><span class="p">:</span> <span class="n">plan_id</span><span class="p">,</span> <span class="s1">&#39;places&#39;</span><span class="p">:</span> <span class="n">places</span><span class="p">,</span> <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="n">static_url</span><span class="p">,</span> <span class="s1">&#39;start_loc&#39;</span><span class="p">:</span> <span class="n">start_loc</span><span class="p">,</span> <span class="s1">&#39;obrazy&#39;</span><span class="p">:</span> <span class="nb">zip</span><span class="p">(</span><span class="n">atrakcje</span><span class="p">,</span> <span class="n">obrazy</span><span class="p">),</span> <span class="s1">&#39;mode&#39;</span><span class="p">:</span> <span class="n">mode</span><span class="p">})</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">StartLocation</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;pojedynczy_plan.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;form&#39;</span><span class="p">:</span> <span class="n">form</span><span class="p">,</span> <span class="s1">&#39;plan&#39;</span><span class="p">:</span> <span class="n">plan</span><span class="p">,</span> <span class="s1">&#39;obrazy&#39;</span><span class="p">:</span> <span class="nb">zip</span><span class="p">(</span><span class="n">atrakcje</span><span class="p">,</span> <span class="n">obrazy</span><span class="p">)})</span></div>
+
+
+
+<div class="viewcode-block" id="plany">
+<a class="viewcode-back" href="../../views.html#mainapp.views.plany">[docs]</a>
+<span class="k">def</span> <span class="nf">plany</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wyświetla listę dostępnych planów podróży.</span>
+
+<span class="sd">    Argumenty:</span>
+<span class="sd">    request (HttpRequest): Obiekt żądania HTTP.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Rozpoczęcie wyświetlania głównego widoku aplikacji&quot;</span><span class="p">)</span>
+
+    <span class="n">plany</span> <span class="o">=</span> <span class="n">Plan</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">photos_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">BASE_DIR</span><span class="p">,</span> <span class="s1">&#39;mainapp&#39;</span><span class="p">,</span> <span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="s1">&#39;plan_photos&#39;</span><span class="p">)</span>
+    <span class="n">photos</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">photos_path</span><span class="p">))</span>
+    <span class="n">plans_with_photos</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">plany</span><span class="p">,</span> <span class="n">photos</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Załadowano plany&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;plany.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;plans_with_photos&#39;</span><span class="p">:</span> <span class="n">plans_with_photos</span><span class="p">})</span></div>
+
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../views.html#mainapp.views.main">[docs]</a>
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Główny widok aplikacji.</span>
+
+<span class="sd">    Wyświetla listę dostępnych atrakcji.</span>
+
+<span class="sd">    Argumenty:</span>
+<span class="sd">    request (HttpRequest): Obiekt żądania HTTP.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Rozpoczęcie wyświetlania głównego widoku aplikacji&quot;</span><span class="p">)</span>
+
+    <span class="n">atrakcje</span> <span class="o">=</span> <span class="n">Atrakcja</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">atrakcja</span> <span class="ow">in</span> <span class="n">atrakcje</span><span class="p">:</span>
+        <span class="n">atrakcja</span><span class="o">.</span><span class="n">obrazy</span> <span class="o">=</span> <span class="n">atrakcja</span><span class="o">.</span><span class="n">obraz</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Załadowano atrakcje&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;home.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;atrakcje&#39;</span><span class="p">:</span> <span class="n">atrakcje</span><span class="p">})</span></div>
+
+
+
+<div class="viewcode-block" id="koszyk">
+<a class="viewcode-back" href="../../views.html#mainapp.views.koszyk">[docs]</a>
+<span class="k">def</span> <span class="nf">koszyk</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wyświetla zawartość koszyka zakupów.</span>
+
+<span class="sd">    GET: Wyświetla zawartość koszyka oraz sumę cen.</span>
+
+<span class="sd">    Argumenty:</span>
+<span class="sd">    request (HttpRequest): Obiekt żądania HTTP.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Rozpoczęcie wyświetlania koszyka zakupów&quot;</span><span class="p">)</span>
+        <span class="n">znizki</span> <span class="o">=</span> <span class="n">Znizka</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">koszyk_items</span> <span class="o">=</span> <span class="n">Koszyk</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">id_klienta</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+        <span class="n">suma</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">ilosc</span> <span class="o">*</span> <span class="n">item</span><span class="o">.</span><span class="n">cena_koncowa</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">koszyk_items</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">koszyk_items</span><span class="p">:</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">pierwszy_obraz</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">id_atrakcji</span><span class="o">.</span><span class="n">obraz</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Załadowano koszyk zakupów&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">koszyk_items</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">suma</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;koszyk.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;koszyk_items&#39;</span><span class="p">:</span> <span class="n">koszyk_items</span><span class="p">,</span> <span class="s1">&#39;suma_cen&#39;</span><span class="p">:</span> <span class="n">suma</span><span class="p">,</span> <span class="s1">&#39;znizki&#39;</span><span class="p">:</span> <span class="n">znizki</span><span class="p">})</span></div>
+
+
+
+<div class="viewcode-block" id="dodaj_do_planu">
+<a class="viewcode-back" href="../../views.html#mainapp.views.dodaj_do_planu">[docs]</a>
+<span class="k">def</span> <span class="nf">dodaj_do_planu</span><span class="p">(</span><span class="n">plan_id</span><span class="p">,</span> <span class="n">atrakcja_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dodaje atrakcję do planu podróży.</span>
+
+<span class="sd">    Argumenty:</span>
+<span class="sd">    plan_id (int): Identyfikator planu, do którego ma zostać dodana atrakcja.</span>
+<span class="sd">    atrakcja_id (int): Identyfikator atrakcji, która ma zostać dodana do planu.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rozpoczęcie dodawania atrakcji do planu: plan_id=</span><span class="si">{</span><span class="n">plan_id</span><span class="si">}</span><span class="s2">, atrakcja_id=</span><span class="si">{</span><span class="n">atrakcja_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">plan</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Plan</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">plan_id</span><span class="p">)</span>
+    <span class="n">atrakcja</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Atrakcja</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">atrakcja_id</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">plan</span><span class="o">.</span><span class="n">pk</span><span class="p">:</span>
+        <span class="n">plan</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+    <span class="n">plan</span><span class="o">.</span><span class="n">atrakcje</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">atrakcja</span><span class="p">)</span>
+
+    <span class="n">plan</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dodano atrakcję do planu: plan_id=</span><span class="si">{</span><span class="n">plan_id</span><span class="si">}</span><span class="s2">, atrakcja_id=</span><span class="si">{</span><span class="n">atrakcja_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;plan&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="pdf_download">
+<a class="viewcode-back" href="../../views.html#mainapp.views.pdf_download">[docs]</a>
+<span class="k">def</span> <span class="nf">pdf_download</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generuje i zwraca plik PDF z wybranymi atrakcjami.</span>
+
+<span class="sd">    Argumenty:</span>
+<span class="sd">    request (HttpRequest): Obiekt żądania HTTP.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Rozpoczęcie generowania pliku PDF&quot;</span><span class="p">)</span>
+
+    <span class="n">from_basket</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;from_basket&#39;</span><span class="p">)</span>
+    <span class="n">start_loc</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;start_loc&#39;</span><span class="p">)</span>
+    <span class="n">mode</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mode&#39;</span><span class="p">)</span>
+    <span class="n">plan_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;plan_id&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">from_basket</span> <span class="o">==</span> <span class="s2">&quot;True&quot;</span><span class="p">:</span>
+        <span class="n">koszyk_items</span> <span class="o">=</span> <span class="n">Koszyk</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">id_klienta</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+        <span class="n">loc_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">id_atrakcji</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">koszyk_items</span><span class="p">]</span>
+        <span class="n">quantities</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">ilosc</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">koszyk_items</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plan</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Plan</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">plan_id</span><span class="p">)</span>
+        <span class="n">loc_list</span> <span class="o">=</span> <span class="n">plan</span><span class="o">.</span><span class="n">atrakcje</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">quantities</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">loc_list</span><span class="p">))]</span>
+
+    <span class="n">pdf</span> <span class="o">=</span> <span class="n">generate_pdf</span><span class="p">(</span><span class="n">start_loc</span><span class="p">,</span> <span class="n">loc_list</span><span class="p">,</span> <span class="n">quantities</span><span class="o">=</span><span class="n">quantities</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+
+    <span class="n">pdf_bytes</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">()</span>
+    <span class="n">pdf</span><span class="o">.</span><span class="n">output_pdf</span><span class="p">(</span><span class="n">pdf_bytes</span><span class="p">)</span>
+
+    <span class="n">pdf_bytes</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">pdf_bytes</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;application/pdf&#39;</span><span class="p">)</span>
+    <span class="n">response</span><span class="p">[</span><span class="s1">&#39;Content-Disposition&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;attachment; filename=&quot;plan.pdf&quot;&#39;</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Wygenerowano plik PDF&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span></div>
+
+
+
+<div class="viewcode-block" id="send_mail">
+<a class="viewcode-back" href="../../views.html#mainapp.views.send_mail">[docs]</a>
+<span class="k">def</span> <span class="nf">send_mail</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Funkcja wysyła wiadomość e-mail z załączonym plikiem PDF zawierającym plan zwiedzania.</span>
+
+<span class="sd">    Argumenty:</span>
+<span class="sd">    request (HttpRequest): Obiekt żądania HTTP.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Rozpoczęcie wysyłania wiadomości e-mail z plikiem PDF&quot;</span><span class="p">)</span>
+
+    <span class="n">from_basket</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;from_basket&#39;</span><span class="p">)</span>
+    <span class="n">start_loc</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;start_loc&#39;</span><span class="p">)</span>
+    <span class="n">mode</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mode&#39;</span><span class="p">)</span>
+    <span class="n">plan_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;plan_id&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">from_basket</span> <span class="o">==</span> <span class="s2">&quot;True&quot;</span><span class="p">:</span>
+        <span class="n">koszyk_items</span> <span class="o">=</span> <span class="n">Koszyk</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">id_klienta</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+        <span class="n">loc_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">id_atrakcji</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">koszyk_items</span><span class="p">]</span>
+        <span class="n">quantities</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">ilosc</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">koszyk_items</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plan</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Plan</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">plan_id</span><span class="p">)</span>
+        <span class="n">loc_list</span> <span class="o">=</span> <span class="n">plan</span><span class="o">.</span><span class="n">atrakcje</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">quantities</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">loc_list</span><span class="p">))]</span>
+
+    <span class="n">pdf</span> <span class="o">=</span> <span class="n">generate_pdf</span><span class="p">(</span><span class="n">start_loc</span><span class="p">,</span> <span class="n">loc_list</span><span class="p">,</span> <span class="n">quantities</span><span class="o">=</span><span class="n">quantities</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+
+    <span class="n">pdf_bytes</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">()</span>
+    <span class="n">pdf</span><span class="o">.</span><span class="n">output_pdf</span><span class="p">(</span><span class="n">pdf_bytes</span><span class="p">)</span>
+    <span class="n">pdf_bytes</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+
+    <span class="n">email</span> <span class="o">=</span> <span class="n">EmailMessage</span><span class="p">(</span>
+        <span class="s1">&#39;Atrakcje Warszawy&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;W załączniku znajduje się plik PDF zawierający Twój plan zwiedzania. Dziękujemy za skorzystanie z naszych usług.&#39;</span><span class="p">,</span>
+        <span class="n">settings</span><span class="o">.</span><span class="n">EMAIL_USER</span><span class="p">,</span>
+        <span class="p">[</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="n">email</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="s1">&#39;Plan_zwiedzania.pdf&#39;</span><span class="p">,</span> <span class="n">pdf_bytes</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="s1">&#39;application/pdf&#39;</span><span class="p">)</span>
+    <span class="n">email</span><span class="o">.</span><span class="n">send</span><span class="p">()</span>
+
+    <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;Pomyślnie wysłano wiadomość email.&#39;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Wysłano wiadomość e-mail z załączonym plikiem PDF&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;koszyk&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="atrakcja">
+<a class="viewcode-back" href="../../views.html#mainapp.views.atrakcja">[docs]</a>
+<span class="k">def</span> <span class="nf">atrakcja</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">atrakcja_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wyświetla szczegóły wybranej atrakcji.</span>
+
+<span class="sd">    Argumenty:</span>
+<span class="sd">    request (HttpRequest): Obiekt żądania HTTP.</span>
+<span class="sd">    atrakcja_id (int): Identyfikator atrakcji, której szczegóły mają zostać wyświetlone.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rozpoczęcie wyświetlania szczegółów atrakcji: </span><span class="si">{</span><span class="n">atrakcja_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">atrakcja</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Atrakcja</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">atrakcja_id</span><span class="p">)</span>
+    <span class="n">obrazy</span> <span class="o">=</span> <span class="n">atrakcja</span><span class="o">.</span><span class="n">obraz</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
+    <span class="n">pierwszy_obraz</span> <span class="o">=</span> <span class="n">obrazy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Załadowano szczegóły atrakcji: </span><span class="si">{</span><span class="n">atrakcja_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;atrakcja.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;atrakcja&#39;</span><span class="p">:</span> <span class="n">atrakcja</span><span class="p">,</span> <span class="s1">&#39;pierwszy_obraz&#39;</span><span class="p">:</span> <span class="n">pierwszy_obraz</span><span class="p">})</span></div>
+
+
+
+<div class="viewcode-block" id="plan_uzytkownika">
+<a class="viewcode-back" href="../../views.html#mainapp.views.plan_uzytkownika">[docs]</a>
+<span class="k">def</span> <span class="nf">plan_uzytkownika</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wyświetla plany użytkownika wraz z powiązanymi atrakcjami.</span>
+
+<span class="sd">    Argumenty:</span>
+<span class="sd">    request (HttpRequest): Obiekt żądania HTTP.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Rozpoczęcie wyświetlania planów użytkownika&quot;</span><span class="p">)</span>
+
+    <span class="n">plany</span> <span class="o">=</span> <span class="n">PlanyUzytkownika</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">id_klienta</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span><span class="o">.</span><span class="n">prefetch_related</span><span class="p">(</span><span class="s1">&#39;atrakcje&#39;</span><span class="p">)</span>
+    <span class="n">plany_z_atrakcjami</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">plan</span> <span class="ow">in</span> <span class="n">plany</span><span class="p">:</span>
+        <span class="n">atrakcje_z_obrazami</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">atrakcja</span> <span class="ow">in</span> <span class="n">plan</span><span class="o">.</span><span class="n">atrakcje</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">obrazy</span> <span class="o">=</span> <span class="n">atrakcja</span><span class="o">.</span><span class="n">obraz</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
+            <span class="n">pierwsze_zdjecie</span> <span class="o">=</span> <span class="n">obrazy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">obrazy</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="n">atrakcje_z_obrazami</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s1">&#39;atrakcja&#39;</span><span class="p">:</span> <span class="n">atrakcja</span><span class="p">,</span>
+                <span class="s1">&#39;pierwsze_zdjecie&#39;</span><span class="p">:</span> <span class="n">pierwsze_zdjecie</span>
+            <span class="p">})</span>
+        <span class="n">plany_z_atrakcjami</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s1">&#39;plan&#39;</span><span class="p">:</span> <span class="n">plan</span><span class="p">,</span>
+            <span class="s1">&#39;atrakcje&#39;</span><span class="p">:</span> <span class="n">atrakcje_z_obrazami</span>
+        <span class="p">})</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Wyświetlono plany użytkownika&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;plan_uzytkownika.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;plany_z_atrakcjami&#39;</span><span class="p">:</span> <span class="n">plany_z_atrakcjami</span><span class="p">})</span></div>
+
+
+
+<div class="viewcode-block" id="zapisz_plan">
+<a class="viewcode-back" href="../../views.html#mainapp.views.zapisz_plan">[docs]</a>
+<span class="k">def</span> <span class="nf">zapisz_plan</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Zapisuje nowy plan użytkownika na podstawie elementów w koszyku.</span>
+
+<span class="sd">    Argumenty:</span>
+<span class="sd">    request (HttpRequest): Obiekt żądania HTTP.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Rozpoczęcie zapisywania planu użytkownika&quot;</span><span class="p">)</span>
+        <span class="n">plan_name</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;plan_name&#39;</span><span class="p">)</span>
+        <span class="n">koszyk_items</span> <span class="o">=</span> <span class="n">Koszyk</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">id_klienta</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+        <span class="n">plan</span> <span class="o">=</span> <span class="n">PlanyUzytkownika</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">id_klienta</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span>
+            <span class="n">nazwa_planu_uzytkownika</span><span class="o">=</span><span class="n">plan_name</span><span class="p">,</span>
+            <span class="n">data_utworzenia</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">koszyk_items</span><span class="p">:</span>
+            <span class="n">plan</span><span class="o">.</span><span class="n">atrakcje</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id_atrakcji</span><span class="p">)</span>
+        <span class="n">plan</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+        <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;Zapisano plan&#39;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Zapisano plan: </span><span class="si">{</span><span class="n">plan_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;plan_uzytkownika&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;zapisz_plan.html&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="usun_z_planu">
+<a class="viewcode-back" href="../../views.html#mainapp.views.usun_z_planu">[docs]</a>
+<span class="k">def</span> <span class="nf">usun_z_planu</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">plan_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Usuwa plan użytkownika z bazy danych.</span>
+
+<span class="sd">    Argumenty:</span>
+<span class="sd">    request (HttpRequest): Obiekt żądania HTTP.</span>
+<span class="sd">    plan_id (int): Identyfikator planu, który ma zostać usunięty.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Usuwanie planu uzytkownika&quot;</span><span class="p">)</span>
+
+        <span class="n">plan</span> <span class="o">=</span> <span class="n">PlanyUzytkownika</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">plan_id</span><span class="p">)</span>
+        <span class="n">plan</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+
+        <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;Usunięto z planu&#39;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Usunięto plan użytkownika&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;plan_uzytkownika&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;plan_uzytkownika&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="plan_do_koszyka">
+<a class="viewcode-back" href="../../views.html#mainapp.views.plan_do_koszyka">[docs]</a>
+<span class="k">def</span> <span class="nf">plan_do_koszyka</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">plan_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wczytuje atrakcje z wybranego planu do koszyka użytkownika.</span>
+
+<span class="sd">    Argumenty:</span>
+<span class="sd">    request (HttpRequest): Obiekt żądania HTTP.</span>
+<span class="sd">    plan_id (int): Identyfikator planu, z którego mają być wczytane atrakcje.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Rozpoczęcie wczytywania planu do koszyka&quot;</span><span class="p">)</span>
+
+    <span class="n">koszyk_items</span> <span class="o">=</span> <span class="n">Koszyk</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">id_klienta</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+    <span class="n">koszyk_items</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+
+    <span class="n">plan</span> <span class="o">=</span> <span class="n">PlanyUzytkownika</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">plan_id</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">atrakcja</span> <span class="ow">in</span> <span class="n">plan</span><span class="o">.</span><span class="n">atrakcje</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+        <span class="n">koszyk</span> <span class="o">=</span> <span class="n">Koszyk</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">id_atrakcji</span><span class="o">=</span><span class="n">atrakcja</span><span class="p">,</span> <span class="n">id_klienta</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">cena_koncowa</span><span class="o">=</span><span class="n">atrakcja</span><span class="o">.</span><span class="n">cena_podstawowa</span><span class="p">,</span> <span class="n">ilosc</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">koszyk</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+    <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;Wczytano plan do koszyka&#39;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Wczytano plan do koszyka&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;koszyk&#39;</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Łukasz Kotowski, Dominik Gąsowski, Wojciech Domański, Jakub Kazimiruk.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

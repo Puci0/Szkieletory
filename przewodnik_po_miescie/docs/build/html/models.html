@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>models.py &mdash; Przewodnik po mieście 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=8d563738"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="views.py" href="views.html" />
+    <link rel="prev" title="Dokumentacja" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Przewodnik po mieście
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">models.py</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.models.Adres_atrakcji"><code class="docutils literal notranslate"><span class="pre">Adres_atrakcji</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mainapp.models.Adres_atrakcji.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Adres_atrakcji.DoesNotExist</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mainapp.models.Adres_atrakcji.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Adres_atrakcji.MultipleObjectsReturned</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.models.Atrakcja"><code class="docutils literal notranslate"><span class="pre">Atrakcja</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mainapp.models.Atrakcja.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Atrakcja.DoesNotExist</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mainapp.models.Atrakcja.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Atrakcja.MultipleObjectsReturned</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.models.Kategorie"><code class="docutils literal notranslate"><span class="pre">Kategorie</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mainapp.models.Kategorie.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Kategorie.DoesNotExist</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mainapp.models.Kategorie.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Kategorie.MultipleObjectsReturned</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.models.Koszyk"><code class="docutils literal notranslate"><span class="pre">Koszyk</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mainapp.models.Koszyk.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Koszyk.DoesNotExist</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mainapp.models.Koszyk.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Koszyk.MultipleObjectsReturned</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.models.Plan"><code class="docutils literal notranslate"><span class="pre">Plan</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mainapp.models.Plan.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Plan.DoesNotExist</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mainapp.models.Plan.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Plan.MultipleObjectsReturned</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mainapp.models.Plan.save"><code class="docutils literal notranslate"><span class="pre">Plan.save()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.models.PlanyUzytkownika"><code class="docutils literal notranslate"><span class="pre">PlanyUzytkownika</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mainapp.models.PlanyUzytkownika.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">PlanyUzytkownika.DoesNotExist</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mainapp.models.PlanyUzytkownika.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">PlanyUzytkownika.MultipleObjectsReturned</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.models.PrzypisanieAtrakcji"><code class="docutils literal notranslate"><span class="pre">PrzypisanieAtrakcji</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mainapp.models.PrzypisanieAtrakcji.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">PrzypisanieAtrakcji.DoesNotExist</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mainapp.models.PrzypisanieAtrakcji.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">PrzypisanieAtrakcji.MultipleObjectsReturned</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.models.Znizka"><code class="docutils literal notranslate"><span class="pre">Znizka</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mainapp.models.Znizka.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Znizka.DoesNotExist</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mainapp.models.Znizka.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Znizka.MultipleObjectsReturned</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="views.html">views.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pdf.html">pdf.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="maps.html">maps.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forms.html">forms.py</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Przewodnik po mieście</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">models.py</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/models.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="models-py">
+<h1>models.py<a class="headerlink" href="#models-py" title="Link to this heading"></a></h1>
+<dl class="py class" id="module-mainapp.models">
+<dt class="sig sig-object py" id="mainapp.models.Adres_atrakcji">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mainapp.models.</span></span><span class="sig-name descname"><span class="pre">Adres_atrakcji</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/models.html#Adres_atrakcji"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.models.Adres_atrakcji" title="Link to this definition"></a></dt>
+<dd><p>Przechowuje adres pojedynczej atrakcji, związany z modelem <cite>Atrakcja</cite>.</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="mainapp.models.Adres_atrakcji.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#mainapp.models.Adres_atrakcji.DoesNotExist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="mainapp.models.Adres_atrakcji.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#mainapp.models.Adres_atrakcji.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mainapp.models.Atrakcja">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mainapp.models.</span></span><span class="sig-name descname"><span class="pre">Atrakcja</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/models.html#Atrakcja"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.models.Atrakcja" title="Link to this definition"></a></dt>
+<dd><p>Przechowuje pojedynczą atrakcję, związaną z modelem <cite>Kategorie</cite>.</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="mainapp.models.Atrakcja.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#mainapp.models.Atrakcja.DoesNotExist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="mainapp.models.Atrakcja.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#mainapp.models.Atrakcja.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mainapp.models.Kategorie">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mainapp.models.</span></span><span class="sig-name descname"><span class="pre">Kategorie</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/models.html#Kategorie"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.models.Kategorie" title="Link to this definition"></a></dt>
+<dd><p>Przechowuje pojedynczą kategorię, która może być przypisana do wielu atrakcji.</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="mainapp.models.Kategorie.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#mainapp.models.Kategorie.DoesNotExist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="mainapp.models.Kategorie.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#mainapp.models.Kategorie.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mainapp.models.Koszyk">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mainapp.models.</span></span><span class="sig-name descname"><span class="pre">Koszyk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/models.html#Koszyk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.models.Koszyk" title="Link to this definition"></a></dt>
+<dd><p>Przechowuje pojedynczy przedmiot w koszyku użytkownika, związany z modelami <cite>Atrakcja</cite> i
+<cite>auth.User</cite>.</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="mainapp.models.Koszyk.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#mainapp.models.Koszyk.DoesNotExist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="mainapp.models.Koszyk.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#mainapp.models.Koszyk.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mainapp.models.Plan">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mainapp.models.</span></span><span class="sig-name descname"><span class="pre">Plan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/models.html#Plan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.models.Plan" title="Link to this definition"></a></dt>
+<dd><p>Przechowuje pojedynczy plan utworzony przez użytkownika, związany z modelem <cite>auth.User</cite> oraz
+wieloma <cite>Atrakcja</cite> przez model <cite>PrzypisanieAtrakcji</cite>.</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="mainapp.models.Plan.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#mainapp.models.Plan.DoesNotExist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="mainapp.models.Plan.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#mainapp.models.Plan.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mainapp.models.Plan.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/models.html#Plan.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.models.Plan.save" title="Link to this definition"></a></dt>
+<dd><p>Niestandardowa metoda zapisu obliczająca końcową cenę planu
+na podstawie cen zawartych atrakcji.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mainapp.models.PlanyUzytkownika">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mainapp.models.</span></span><span class="sig-name descname"><span class="pre">PlanyUzytkownika</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_klienta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nazwa_planu_uzytkownika</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_utworzenia</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/models.html#PlanyUzytkownika"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.models.PlanyUzytkownika" title="Link to this definition"></a></dt>
+<dd><dl class="py exception">
+<dt class="sig sig-object py" id="mainapp.models.PlanyUzytkownika.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#mainapp.models.PlanyUzytkownika.DoesNotExist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="mainapp.models.PlanyUzytkownika.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#mainapp.models.PlanyUzytkownika.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mainapp.models.PrzypisanieAtrakcji">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mainapp.models.</span></span><span class="sig-name descname"><span class="pre">PrzypisanieAtrakcji</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/models.html#PrzypisanieAtrakcji"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.models.PrzypisanieAtrakcji" title="Link to this definition"></a></dt>
+<dd><p>Model pośredni dla relacji wiele-do-wielu między modelami <cite>Plan</cite> i
+<cite>Atrakcja</cite>.</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="mainapp.models.PrzypisanieAtrakcji.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#mainapp.models.PrzypisanieAtrakcji.DoesNotExist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="mainapp.models.PrzypisanieAtrakcji.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#mainapp.models.PrzypisanieAtrakcji.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mainapp.models.Znizka">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mainapp.models.</span></span><span class="sig-name descname"><span class="pre">Znizka</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/models.html#Znizka"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.models.Znizka" title="Link to this definition"></a></dt>
+<dd><p>Przechowuje pojedynczą zniżkę, która może być stosowana do różnych atrakcji lub planów.</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="mainapp.models.Znizka.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#mainapp.models.Znizka.DoesNotExist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="mainapp.models.Znizka.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#mainapp.models.Znizka.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Dokumentacja" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="views.html" class="btn btn-neutral float-right" title="views.py" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Łukasz Kotowski, Dominik Gąsowski, Wojciech Domański, Jakub Kazimiruk.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

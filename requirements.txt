@@ -1,0 +1,5 @@
+django==5.0.4
+requests==2.31.0
+fpdf2==2.7.8
+django-environ==0.11.2
+sphinx==7.3.7

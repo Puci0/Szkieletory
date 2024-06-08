@@ -1,0 +1,140 @@
+.header{
+    text-align: center;
+}
+.atrakcje {
+    display: flex;
+    flex-wrap: wrap;
+    width: 80%;
+    margin: 0 auto;
+    margin-top: 40px;
+}
+.atrakcja {
+    width: calc(30% - 20px);
+    border: 1px solid black;
+    border-radius: 20px;
+    padding: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+    margin-right: 5px;
+    margin-left: 5px;
+    position: relative;
+    height: 550px;
+    transition: background-color 0.5s;
+}
+.atrakcja:hover{
+    background-color: #c8dde3;
+}
+#tekst_opisu{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    font-size: 20px;
+}
+#nazwa_atrakcji{
+    font-size: 30px;
+}
+#koszyk{
+    text-align: right;
+}
+#panorama{
+    padding-top: 0.5%;
+    width: 100%;
+}
+#koszyk {
+    position: absolute;
+    bottom: 7px;
+    right: 7px;
+    background-color: #53699a;
+    border-radius: 10px;
+    color: black;
+    font-size: 15px;
+    padding: 5px 10px;
+    border: none;
+}
+
+.obraz-container {
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+    display: block;
+}
+
+.obraz-container img{
+    max-width: 100%;
+    height: 100%;
+    border-radius: 20px;
+}
+
+.prev, .next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    padding: 16px;
+    margin-top: -22px;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    transition: 0.6s ease;
+    border-radius: 0 3px 3px 0;
+    background: transparent;
+    border: none;
+}
+.prev {
+    left: 0;
+}
+
+.next {
+    right: 0;
+}
+
+.prev:hover, .next:hover {
+    background-color: black;
+}
+
+.image-container {
+    position: relative;
+    display: inline-block;
+}
+
+#gotowe_plany{
+    padding: 15px;
+    border-radius: 10px;
+    border: none;
+    color: black;
+    cursor: pointer;
+    background-color: #7f90ba;
+    width: calc(100%);
+    font-size: 25px;
+    margin-left: 80%;
+}
+
+#search-button{
+    font-size: 20px;
+    background-color: #7f90ba;
+    border-radius: 10px;
+    padding: 5px 10px;
+    color: black;
+    border: 1px solid black;
+    float: right;
+}
+
+form {
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    width: 50%;
+    text-align: left;
+    margin: 0 auto;
+    margin-top: 30px;
+}
+input {
+    width: 80%;
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}

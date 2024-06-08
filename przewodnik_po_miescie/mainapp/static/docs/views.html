@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>views.py &mdash; Przewodnik po mieście 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=8d563738"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pdf.py" href="pdf.html" />
+    <link rel="prev" title="models.py" href="models.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Przewodnik po mieście
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="models.html">models.py</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">views.py</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.views.atrakcja"><code class="docutils literal notranslate"><span class="pre">atrakcja()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.views.dodaj_do_koszyka"><code class="docutils literal notranslate"><span class="pre">dodaj_do_koszyka()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.views.dodaj_do_koszyka_home"><code class="docutils literal notranslate"><span class="pre">dodaj_do_koszyka_home()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.views.dodaj_do_planu"><code class="docutils literal notranslate"><span class="pre">dodaj_do_planu()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.views.koszyk"><code class="docutils literal notranslate"><span class="pre">koszyk()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.views.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.views.pdf_download"><code class="docutils literal notranslate"><span class="pre">pdf_download()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.views.plan_do_koszyka"><code class="docutils literal notranslate"><span class="pre">plan_do_koszyka()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.views.plan_uzytkownika"><code class="docutils literal notranslate"><span class="pre">plan_uzytkownika()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.views.plany"><code class="docutils literal notranslate"><span class="pre">plany()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.views.pojedynczy_plan"><code class="docutils literal notranslate"><span class="pre">pojedynczy_plan()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.views.privacy_policy"><code class="docutils literal notranslate"><span class="pre">privacy_policy()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.views.send_mail"><code class="docutils literal notranslate"><span class="pre">send_mail()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.views.trasa"><code class="docutils literal notranslate"><span class="pre">trasa()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.views.user_login"><code class="docutils literal notranslate"><span class="pre">user_login()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.views.user_logout"><code class="docutils literal notranslate"><span class="pre">user_logout()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.views.user_signup"><code class="docutils literal notranslate"><span class="pre">user_signup()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.views.usun_z_koszyka"><code class="docutils literal notranslate"><span class="pre">usun_z_koszyka()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.views.usun_z_planu"><code class="docutils literal notranslate"><span class="pre">usun_z_planu()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mainapp.views.zapisz_plan"><code class="docutils literal notranslate"><span class="pre">zapisz_plan()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pdf.html">pdf.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="maps.html">maps.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forms.html">forms.py</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Przewodnik po mieście</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">views.py</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/views.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-mainapp.views">
+<span id="views-py"></span><h1>views.py<a class="headerlink" href="#module-mainapp.views" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="mainapp.views.atrakcja">
+<span class="sig-prename descclassname"><span class="pre">mainapp.views.</span></span><span class="sig-name descname"><span class="pre">atrakcja</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atrakcja_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/views.html#atrakcja"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.views.atrakcja" title="Link to this definition"></a></dt>
+<dd><p>Wyświetla szczegóły wybranej atrakcji.</p>
+<p>Argumenty:
+request (HttpRequest): Obiekt żądania HTTP.
+atrakcja_id (int): Identyfikator atrakcji, której szczegóły mają zostać wyświetlone.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mainapp.views.dodaj_do_koszyka">
+<span class="sig-prename descclassname"><span class="pre">mainapp.views.</span></span><span class="sig-name descname"><span class="pre">dodaj_do_koszyka</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atrakcja_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/views.html#dodaj_do_koszyka"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.views.dodaj_do_koszyka" title="Link to this definition"></a></dt>
+<dd><p>Dodaje atrakcję do koszyka.</p>
+<p>Argumenty:
+request (HttpRequest): Obiekt żądania HTTP.
+atrakcja_id (int): Identyfikator atrakcji, która ma zostać dodana do koszyka.</p>
+<p>GET: Przekierowuje na stronę logowania jeśli użytkownik nie jest zalogowany.
+POST: Dodaje atrakcję do koszyka lub zmienia ilość już dodanej atrakcji.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mainapp.views.dodaj_do_koszyka_home">
+<span class="sig-prename descclassname"><span class="pre">mainapp.views.</span></span><span class="sig-name descname"><span class="pre">dodaj_do_koszyka_home</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atrakcja_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/views.html#dodaj_do_koszyka_home"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.views.dodaj_do_koszyka_home" title="Link to this definition"></a></dt>
+<dd><p>Dodaje atrakcję do koszyka z widoku home.</p>
+<p>Argumenty:
+request (HttpRequest): Obiekt żądania HTTP.
+atrakcja_id (int): Identyfikator atrakcji, która ma zostać dodana do koszyka.</p>
+<p>GET: Przekierowuje na stronę logowania jeśli użytkownik nie jest zalogowany.
+POST: Dodaje atrakcję do koszyka lub zwiększa ilość jeśli już jest w koszyku.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mainapp.views.dodaj_do_planu">
+<span class="sig-prename descclassname"><span class="pre">mainapp.views.</span></span><span class="sig-name descname"><span class="pre">dodaj_do_planu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plan_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atrakcja_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/views.html#dodaj_do_planu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.views.dodaj_do_planu" title="Link to this definition"></a></dt>
+<dd><p>Dodaje atrakcję do planu podróży.</p>
+<p>Argumenty:
+plan_id (int): Identyfikator planu, do którego ma zostać dodana atrakcja.
+atrakcja_id (int): Identyfikator atrakcji, która ma zostać dodana do planu.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mainapp.views.koszyk">
+<span class="sig-prename descclassname"><span class="pre">mainapp.views.</span></span><span class="sig-name descname"><span class="pre">koszyk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/views.html#koszyk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.views.koszyk" title="Link to this definition"></a></dt>
+<dd><p>Wyświetla zawartość koszyka zakupów.</p>
+<p>GET: Wyświetla zawartość koszyka oraz sumę cen.</p>
+<p>Argumenty:
+request (HttpRequest): Obiekt żądania HTTP.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mainapp.views.main">
+<span class="sig-prename descclassname"><span class="pre">mainapp.views.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/views.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.views.main" title="Link to this definition"></a></dt>
+<dd><p>Główny widok aplikacji.</p>
+<p>Wyświetla listę dostępnych atrakcji.</p>
+<p>Argumenty:
+request (HttpRequest): Obiekt żądania HTTP.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mainapp.views.pdf_download">
+<span class="sig-prename descclassname"><span class="pre">mainapp.views.</span></span><span class="sig-name descname"><span class="pre">pdf_download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/views.html#pdf_download"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.views.pdf_download" title="Link to this definition"></a></dt>
+<dd><p>Generuje i zwraca plik PDF z wybranymi atrakcjami.</p>
+<p>Argumenty:
+request (HttpRequest): Obiekt żądania HTTP.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mainapp.views.plan_do_koszyka">
+<span class="sig-prename descclassname"><span class="pre">mainapp.views.</span></span><span class="sig-name descname"><span class="pre">plan_do_koszyka</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plan_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/views.html#plan_do_koszyka"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.views.plan_do_koszyka" title="Link to this definition"></a></dt>
+<dd><p>Wczytuje atrakcje z wybranego planu do koszyka użytkownika.</p>
+<p>Argumenty:
+request (HttpRequest): Obiekt żądania HTTP.
+plan_id (int): Identyfikator planu, z którego mają być wczytane atrakcje.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mainapp.views.plan_uzytkownika">
+<span class="sig-prename descclassname"><span class="pre">mainapp.views.</span></span><span class="sig-name descname"><span class="pre">plan_uzytkownika</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/views.html#plan_uzytkownika"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.views.plan_uzytkownika" title="Link to this definition"></a></dt>
+<dd><p>Wyświetla plany użytkownika wraz z powiązanymi atrakcjami.</p>
+<p>Argumenty:
+request (HttpRequest): Obiekt żądania HTTP.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mainapp.views.plany">
+<span class="sig-prename descclassname"><span class="pre">mainapp.views.</span></span><span class="sig-name descname"><span class="pre">plany</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/views.html#plany"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.views.plany" title="Link to this definition"></a></dt>
+<dd><p>Wyświetla listę dostępnych planów podróży.</p>
+<p>Argumenty:
+request (HttpRequest): Obiekt żądania HTTP.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mainapp.views.pojedynczy_plan">
+<span class="sig-prename descclassname"><span class="pre">mainapp.views.</span></span><span class="sig-name descname"><span class="pre">pojedynczy_plan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plan_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/views.html#pojedynczy_plan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.views.pojedynczy_plan" title="Link to this definition"></a></dt>
+<dd><p>Wyświetla pojedynczy plan podróży.</p>
+<p>GET: Wyświetla informacje o planie oraz formularz do wyboru lokalizacji początkowej i trybu podróży.
+POST: Generuje trasę dla wybranego planu na podstawie lokalizacji początkowej.</p>
+<p>Argumenty:
+request (HttpRequest): Obiekt żądania HTTP.
+plan_id (int): Identyfikator planu, który ma być wyświetlony.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mainapp.views.privacy_policy">
+<span class="sig-prename descclassname"><span class="pre">mainapp.views.</span></span><span class="sig-name descname"><span class="pre">privacy_policy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/views.html#privacy_policy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.views.privacy_policy" title="Link to this definition"></a></dt>
+<dd><p>Widok polityki prywatności.</p>
+<p>Argumenty:
+request (HttpRequest): Obiekt żądania HTTP.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mainapp.views.send_mail">
+<span class="sig-prename descclassname"><span class="pre">mainapp.views.</span></span><span class="sig-name descname"><span class="pre">send_mail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/views.html#send_mail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.views.send_mail" title="Link to this definition"></a></dt>
+<dd><p>Funkcja wysyła wiadomość e-mail z załączonym plikiem PDF zawierającym plan zwiedzania.</p>
+<p>Argumenty:
+request (HttpRequest): Obiekt żądania HTTP.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mainapp.views.trasa">
+<span class="sig-prename descclassname"><span class="pre">mainapp.views.</span></span><span class="sig-name descname"><span class="pre">trasa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/views.html#trasa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.views.trasa" title="Link to this definition"></a></dt>
+<dd><p>Generuje trasę zwiedzania.</p>
+<p>GET: Wyświetla formularz do wyboru lokalizacji początkowej i trybu podróży.
+POST: Generuje trasę na podstawie wybranych atrakcji i lokalizacji początkowej.</p>
+<p>Argumenty:
+request (HttpRequest): Obiekt żądania HTTP.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mainapp.views.user_login">
+<span class="sig-prename descclassname"><span class="pre">mainapp.views.</span></span><span class="sig-name descname"><span class="pre">user_login</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/views.html#user_login"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.views.user_login" title="Link to this definition"></a></dt>
+<dd><p>Widok logowania użytkownika.</p>
+<p>GET: Wyświetla formularz logowania.
+POST: Obsługuje przesłany formularz logowania.</p>
+<p>Argumenty:
+request (HttpRequest): Obiekt żądania HTTP.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mainapp.views.user_logout">
+<span class="sig-prename descclassname"><span class="pre">mainapp.views.</span></span><span class="sig-name descname"><span class="pre">user_logout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/views.html#user_logout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.views.user_logout" title="Link to this definition"></a></dt>
+<dd><p>Wylogowanie użytkownika.</p>
+<p>Argumenty:
+request (HttpRequest): Obiekt żądania HTTP.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mainapp.views.user_signup">
+<span class="sig-prename descclassname"><span class="pre">mainapp.views.</span></span><span class="sig-name descname"><span class="pre">user_signup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/views.html#user_signup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.views.user_signup" title="Link to this definition"></a></dt>
+<dd><p>Widok rejestracji użytkownika.</p>
+<p>GET: Wyświetla formularz rejestracji.
+POST: Obsługuje przesłany formularz rejestracji.</p>
+<p>Argumenty:
+request (HttpRequest): Obiekt żądania HTTP.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mainapp.views.usun_z_koszyka">
+<span class="sig-prename descclassname"><span class="pre">mainapp.views.</span></span><span class="sig-name descname"><span class="pre">usun_z_koszyka</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/views.html#usun_z_koszyka"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.views.usun_z_koszyka" title="Link to this definition"></a></dt>
+<dd><p>Usuwa pozycję z koszyka.</p>
+<p>Argumenty:
+request (HttpRequest): Obiekt żądania HTTP.
+item_id (int): Identyfikator pozycji w koszyku, która ma zostać usunięta.</p>
+<p>POST: Usuwa wybraną pozycję z koszyka.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mainapp.views.usun_z_planu">
+<span class="sig-prename descclassname"><span class="pre">mainapp.views.</span></span><span class="sig-name descname"><span class="pre">usun_z_planu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plan_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/views.html#usun_z_planu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.views.usun_z_planu" title="Link to this definition"></a></dt>
+<dd><p>Usuwa plan użytkownika z bazy danych.</p>
+<p>Argumenty:
+request (HttpRequest): Obiekt żądania HTTP.
+plan_id (int): Identyfikator planu, który ma zostać usunięty.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mainapp.views.zapisz_plan">
+<span class="sig-prename descclassname"><span class="pre">mainapp.views.</span></span><span class="sig-name descname"><span class="pre">zapisz_plan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainapp/views.html#zapisz_plan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mainapp.views.zapisz_plan" title="Link to this definition"></a></dt>
+<dd><p>Zapisuje nowy plan użytkownika na podstawie elementów w koszyku.</p>
+<p>Argumenty:
+request (HttpRequest): Obiekt żądania HTTP.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="models.html" class="btn btn-neutral float-left" title="models.py" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pdf.html" class="btn btn-neutral float-right" title="pdf.py" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Łukasz Kotowski, Dominik Gąsowski, Wojciech Domański, Jakub Kazimiruk.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

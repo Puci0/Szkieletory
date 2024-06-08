@@ -1,0 +1,36 @@
+.naglowek {
+    height: 85px;
+    background-color: #6c9bb5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.naglowek img {
+    width: 350px;
+    height: 100px;
+}
+
+.zarejestruj, .zaloguj, .koszyk {
+    display: inline-block;
+    font-size: 23px;
+    background-color: #53699a;
+    border-radius: 10px;
+    padding: 5px 10px;
+    color: black;
+}
+
+a {
+    text-decoration: none;
+}
+
+.footer {
+    background-color: #6c9bb5;
+    color: #fff;
+    text-align: center;
+    padding: 5px;
+    margin-top: 20px;
+    bottom: 0;
+}
+

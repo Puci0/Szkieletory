@@ -1,0 +1,118 @@
+.lewa_strona, .prawa_strona{
+    border: 1px solid black;
+    border-radius: 20px;
+    padding: 5px;
+    width: 40%;
+    height: auto;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.lewa_strona{
+    margin-right: 5px;
+    width: 75%;
+}
+
+#nazwa_atrakcji{
+    text-align: center;
+}
+
+.plan{
+    display: flex;
+}
+
+#obraz-atrakcji {
+    max-width: 50%;
+    max-height: 50%;
+    border-radius: 20px;
+    margin-top: 2%;
+    margin-left: 7%;
+}
+
+#nazwa_atrakcji{
+    font-size: 40px;
+}
+#opis_atrakcji{
+    font-size: 20px;
+}
+
+form {
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    width: 500px;
+    text-align: left;
+    margin: 0 auto;
+    margin-top: 2%;
+    margin-bottom: 2%;
+}
+
+#pdf, #przycisk {
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 20px;
+    margin-bottom: 15px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    background-color: #7f90ba;
+    width: calc(100%);
+    font-size: 16px;
+}
+
+input, select {
+    display: block;
+    width: calc(100% - 40px);
+    margin: 0 auto;
+    margin-bottom: 15px;
+    margin-top: 15px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+label[for=id_start_location] {
+    margin-left: 25%;
+}
+
+label[for=id_mode]{
+    margin-left: 32%;
+}
+
+input#id_start_location {
+    margin-top: 3.5%;
+}
+
+.prev, .next {
+    cursor: pointer;
+    width: auto;
+    padding: 16px;
+    color: black;
+    font-weight: bold;
+    font-size: 50px;
+    transition: 0.6s ease;
+    border-radius: 0 3px 3px 0;
+    background: transparent;
+    border: none;
+    margin-left: 2%;
+}
+
+.next{
+    position: relative;
+    left: 4%;
+}
+
+button {
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 20px;
+    margin-bottom: 15px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    background-color: #7f90ba;
+    width: calc(100%);
+    font-size: 16px;
+}

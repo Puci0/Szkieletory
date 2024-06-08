@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/rejestracja.css' %}">
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Zarejestruj</button>
+    <a href="{% url 'login' %}" id="mam_konto">Masz już konto?</a>
+</form>
+{% endblock %}

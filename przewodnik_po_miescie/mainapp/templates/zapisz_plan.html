@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load my_filters %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/zapisz_plan.css' %}">
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li>{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <form action="{% url 'zapisz_plan' %}" method="post">
+        {% csrf_token %}
+        <label for="plan_name">Nazwa planu:</label>
+        <input type="text" id="plan_name" name="plan_name" required>
+        <button type="submit">Akceptuj</button>
+    </form>
+{% endblock %}

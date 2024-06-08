@@ -1,0 +1,59 @@
+.atrakcja {
+    background-image: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), url('{{ atrakcja.obraz }}');
+    position: relative;
+    padding-top: 10px;
+    font-family: Verdana;
+    text-align: justify;
+}
+
+#obraz {
+    width: 100%;
+    mask-image: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+}
+
+.atrakcja h2 {
+    margin-top: 0;
+}
+
+.opis {
+    width: 30%;
+    position: absolute;
+    top: 8%;
+    right: 2%;
+    padding: 1%;
+}
+
+.info {
+    position: absolute;
+    top: 8%;
+    left: 2%;
+    padding: 1%;
+    border: 1px solid black;
+    border-radius: 20px;
+    background-color: white;
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+
+#nazwa_atrakcji{
+    position: absolute;
+    top: 2%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 1%;
+    font-size: 30px;
+}
+
+#koszyk {
+    display: inline-block;
+    font-size: 23px;
+    background-color: #8c90ff;
+    border-radius: 10px;
+    padding: 5px 10px;
+    color: black;
+    position: absolute;
+    top: 75%;
+    right: 2%;
+    border: none;
+    opacity: 70%;
+}

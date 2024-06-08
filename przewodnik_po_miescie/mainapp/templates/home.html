@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <img src="{% static 'global_photos/panorama.png' %}" alt="panorama" id="panorama">
+    <form id="search-form">
+        <input type="text" id="search-input" placeholder="Wyszukaj atrakcję...">
+        <button type="button" id="search-button"><b>Szukaj</b></button>
+    </form>
+    <div class="atrakcje">
+        {% for atrakcja in atrakcje %}
+            <div class="atrakcja">
+                <div class="image-container">
+                    <button class="prev" onclick="poprzedniObraz({{ atrakcja.obrazy|safe }}, {{ forloop.counter }})">&#10094;</button>
+                    <div class="obraz-container">
+                         <img src="{{ atrakcja.obrazy.0 }}" alt="photo" class="obraz" id="obraz-atrakcji-{{ forloop.counter }}">
+                    </div>
+                    <button class="next" onclick="nastepnyObraz({{ atrakcja.obrazy|safe }}, {{ forloop.counter }})">&#10095;</button>
+                </div>
+                <p id="nazwa_atrakcji" onclick="window.location.href='{% url 'atrakcja' atrakcja.id %}'"><b>{{ atrakcja.nazwa_atrakcji }}</b></p>
+                <p id="tekst_opisu" onclick="window.location.href='{% url 'atrakcja' atrakcja.id %}'">{{ atrakcja.opis }}</p>
+                <a href="{% url 'dodaj_do_koszyka_home' atrakcja.id %}" id="koszyk"><b>Dodaj do koszyka</b></a>
+            </div>
+        {% endfor %}
+    </div>
+    <a href="{% url 'plany' %}" id="gotowe_plany"><b>Zobacz gotowe plany</b></a>
+
+<script src="{% static 'js/home.js' %}"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var searchForm = document.getElementById("search-form");
+        var searchInput = document.getElementById("search-input");
+        var searchButton = document.getElementById("search-button");
+
+        searchButton.addEventListener("click", function() {
+            searchAttractions(searchInput.value.toLowerCase());
+        });
+
+        function searchAttractions(query) {
+            var attractions = document.getElementsByClassName("atrakcja");
+            for (var i = 0; i < attractions.length; i++) {
+                var name = attractions[i].querySelector("#nazwa_atrakcji").textContent.toLowerCase();
+<!--                var description = attractions[i].querySelector("#tekst_opisu").textContent.toLowerCase();-->
+<!--                if (name.includes(query) || description.includes(query)) {-->
+                if (name.includes(query)) {
+                    attractions[i].style.display = "block";
+                } else {
+                    attractions[i].style.display = "none";
+                }
+            }
+        }
+    });
+</script>
+
+{% endblock %}

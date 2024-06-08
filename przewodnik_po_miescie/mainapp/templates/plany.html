@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/plany.css' %}">
+    {% for plan, photo in plans_with_photos %}
+    <div class="atrakcja">
+        <div class="image-container">
+            <a href="{% url 'pojedynczy_plan' plan_id=plan.pk %}">
+                <img src="{% static 'plan_photos/' %}{{ photo }}" alt="photo" class="obraz" id="obraz-planu-{{ forloop.counter }}">
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+{% endblock %}

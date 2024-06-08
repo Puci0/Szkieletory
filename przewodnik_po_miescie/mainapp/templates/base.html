@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pl">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <title>Atrakcje</title>
+    <link rel="stylesheet" href="{% static 'css/powiadomienia.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+<div class="naglowek">
+    <a href="{% url 'home' %}">
+        <img src="{% static 'global_photos/logo.png' %}" alt="photo">
+    </a>
+    <div>
+        {% if user.is_authenticated %}
+        <a href="{% url 'plan_uzytkownika' %}"><div class="zarejestruj"><b>{{ user.username }}</b></div></a>
+            <a href="{% url 'logout' %}">
+                <div class="zarejestruj"><b>Wyloguj</b></div>
+            </a>
+            <a href="{%  url 'koszyk' %}">
+                <div class="koszyk"><b>Przejdź do koszyka</b></div>
+            </a>
+        {% else %}
+            <a href="{% url 'login' %}">
+                <div class="zaloguj"><b>Zaloguj</b></div>
+            </a>
+            <a href="{% url 'signup' %}">
+                <div class="zarejestruj"><b>Zarejestruj</b></div>
+            </a>
+            <a href="{% url 'login' %}?source=koszyk">
+                <div class="koszyk"><b>Przejdź do koszyka</b></div>
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+{% block content %}
+{% endblock %}
+
+<footer class="footer">
+    <div class="footer-content">
+        <p>&copy; 2024 Atrakcje. Wszelkie prawa zastrzeżone.</p>
+        <p>Kontakt: kontakt@atrakcje.pl | Telefon: 123-456-789</p>
+        <p><a href="{% url 'privacy_policy' %}">Polityka prywatności</a></p>
+    </div>
+</footer>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'js/base.js' %}"></script>
+
+</html>
